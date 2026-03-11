@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>My Workout 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fff5f7;
+    --surface: #ffffff;
+    --surface2: #fff0f3;
+    --border: #fcd5de;
+    --border2: #f9a8b8;
+    --text: #5c2d3a;
+    --text2: #a05068;
+    --text3: #d4a0b0;
+    --rose: #f43f72;
+    --rose-mid: #fb7da0;
+    --rose-soft: #ffe4ec;
+    --rose-pale: #fff0f4;
+    --green: #5ebd8e;
+    --green-mid: #86d4ae;
+    --green-soft: #d8f5e8;
+    --green-pale: #edfaf3;
+    --blue: #6aacdf;
+    --blue-mid: #93c8ef;
+    --blue-soft: #d6eefa;
+    --blue-pale: #edf6fd;
+    --peach: #fba77a;
+    --peach-soft: #fdeee4;
+    --lilac: #c49fdf;
+    --lilac-soft: #f2eafb;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  body { background:var(--bg); color:var(--text); font-family:'Nunito',sans-serif; min-height:100vh; }
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background-image:
+      radial-gradient(circle at 20% 20%, #fcd5de44 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, #d6eefa44 0%, transparent 50%),
+      radial-gradient(circle at 60% 10%, #d8f5e844 0%, transparent 40%);
+    pointer-events:none; z-index:0;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #f9637a 0%, #fb8fa6 45%, #f9b8cb 100%);
+    padding:22px 16px 0;
+    position:sticky; top:0; z-index:50;
+    box-shadow:0 4px 24px #f4436030;
+  }
+  .header-inner { max-width:480px; margin:0 auto; }
+  .header-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+  .header-label { font-size:10px; letter-spacing:2px; color:#ffe0e8; text-transform:uppercase; margin-bottom:3px; font-weight:700; }
+  .header-title { font-family:'Playfair Display',serif; font-size:27px; color:#fff; font-style:italic; text-shadow:0 2px 8px #f4436030; }
+
+  /* TABS */
+  .tab-bar { display:flex; gap:0; }
+  .tab-btn { flex:1; padding:12px 4px; border:none; background:transparent; color:#ffd6e0a0; font-family:'Nunito',sans-serif; font-size:13px; font-weight:700; cursor:pointer; border-bottom:3px solid transparent; transition:all 0.2s; }
+  .tab-btn.active { color:#fff; border-bottom:3px solid #fff; }
+
+  /* CONTENT */
+  .content { max-width:480px; margin:0 auto; padding:18px 14px 60px; position:relative; z-index:1; }
+  .tab-panel { display:none; }
+  .tab-panel.active { display:block; }
+
+  /* DATE ROW */
+  .date-row { display:flex; align-items:center; gap:10px; background:var(--surface); border:2px solid var(--border); border-radius:16px; padding:12px 14px; margin-bottom:14px; box-shadow:0 2px 10px #f4436012; }
+  .date-label { font-size:12px; font-weight:800; color:var(--text2); white-space:nowrap; }
+  .date-input { flex:1; border:none; background:transparent; font-family:'Nunito',sans-serif; font-size:14px; font-weight:700; color:var(--text); outline:none; }
+
+  /* PROGRESS */
+  .progress-wrap { background:var(--surface); border-radius:16px; padding:14px 16px; margin-bottom:14px; box-shadow:0 2px 12px #f4436010; border:2px solid var(--border); }
+  .progress-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .progress-label { font-size:12px; font-weight:700; color:var(--text2); }
+  .progress-pct { font-size:14px; font-weight:800; color:var(--rose); }
+  .progress-track { height:9px; background:var(--rose-soft); border-radius:9px; overflow:hidden; }
+  .progress-fill { height:100%; border-radius:9px; transition:width 0.4s; background:linear-gradient(90deg, var(--rose), var(--rose-mid)); }
+  .progress-fill.complete { background:linear-gradient(90deg, var(--green), var(--green-mid)); }
+
+  /* SECTION LABEL */
+  .section-label { font-size:10px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--text3); margin:18px 0 10px 2px; }
+
+  /* EXERCISE CARDS */
+  .ex-card { background:var(--surface); border:2px solid var(--border); border-radius:18px; margin-bottom:10px; overflow:hidden; box-shadow:0 2px 10px #f4436008; transition:border-color 0.2s, background 0.2s; }
+  .ex-card.done { border-color:var(--green-mid); background:var(--green-pale); }
+  .ex-header { padding:13px 14px; cursor:pointer; display:flex; align-items:center; user-select:none; }
+  .ex-icon { width:42px; height:42px; border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:19px; margin-right:11px; flex-shrink:0; }
+  .ex-info { flex:1; }
+  .ex-pattern-tag { display:inline-block; font-size:9px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:2px 9px; border-radius:20px; margin-bottom:4px; }
+  .ex-name { font-size:15px; font-weight:800; color:var(--text); margin-bottom:2px; }
+  .ex-muscles { font-size:11px; color:var(--text3); font-weight:600; }
+  .ex-right { text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0; margin-left:8px; }
+  .ex-sets-count { font-size:12px; font-weight:800; color:var(--rose-mid); }
+  .ex-chevron { font-size:12px; color:var(--text3); }
+
+  .ex-body { border-top:2px solid var(--border); padding:12px 14px 14px; display:none; background:var(--surface2); }
+  .ex-body.open { display:block; }
+  .ex-card.done .ex-body { background:var(--green-pale); border-color:var(--green-soft); }
+
+  .sets-grid-header { display:grid; grid-template-columns:26px 1fr 1fr 40px 32px; gap:6px; font-size:9px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--text3); padding-bottom:8px; }
+  .set-row { display:grid; grid-template-columns:26px 1fr 1fr 40px 32px; gap:6px; margin-bottom:8px; align-items:center; transition:opacity 0.2s; }
+  .set-row.done-row { opacity:0.38; }
+  .set-num { font-size:13px; font-weight:800; color:var(--text3); text-align:center; }
+
+  .set-input { background:var(--surface); border:2px solid var(--border); border-radius:10px; padding:9px 6px; color:var(--text); font-family:'Nunito',sans-serif; font-size:14px; font-weight:700; outline:none; width:100%; -webkit-appearance:none; transition:border-color 0.15s; text-align:center; }
+  .set-input:focus { border-color:var(--rose-mid); }
+  .set-input::placeholder { color:var(--text3); font-weight:600; }
+
+  .check-btn { width:38px; height:38px; border-radius:10px; border:2px solid var(--border2); background:var(--surface); color:var(--text3); font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; flex-shrink:0; }
+  .check-btn.checked { border-color:var(--green); background:var(--green-soft); color:var(--green); }
+
+  .del-btn { width:28px; height:28px; border-radius:8px; border:none; background:transparent; color:var(--text3); font-size:17px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; padding:0; transition:color 0.15s; }
+  .del-btn:active { color:var(--rose); }
+
+  .add-set-btn { width:100%; margin-top:10px; padding:9px; border:2px dashed var(--border2); border-radius:10px; background:transparent; color:var(--text2); font-family:'Nunito',sans-serif; font-size:12px; font-weight:700; cursor:pointer; transition:all 0.15s; }
+  .add-set-btn:active { background:var(--rose-pale); }
+
+  .prev-best { margin-top:10px; padding:8px 12px; background:var(--surface); border:2px solid var(--border); border-radius:10px; font-size:11px; font-weight:700; color:var(--text3); }
+  .prev-best span { color:var(--rose); }
+
+  .core-tip { margin-top:8px; padding:9px 12px; background:var(--blue-pale); border:2px solid var(--blue-soft); border-radius:10px; font-size:11px; font-weight:700; color:#3a7aaa; line-height:1.6; }
+
+  /* SAVE BTN */
+  .complete-btn { width:100%; padding:17px; margin-top:12px; background:linear-gradient(135deg, #e83b67, #f87096); border:none; border-radius:16px; color:#fff; font-family:'Nunito',sans-serif; font-size:17px; font-weight:800; cursor:pointer; box-shadow:0 4px 18px #f4436030; transition:transform 0.1s; }
+  .complete-btn:active { transform:scale(0.98); }
+
+  /* REST TIP */
+  .rest-tip { margin-top:16px; padding:14px 16px; background:var(--blue-pale); border:2px solid var(--blue-soft); border-radius:16px; font-size:12px; font-weight:600; color:#3a6080; line-height:1.8; }
+  .rest-tip strong { color:var(--blue); font-weight:800; }
+
+  /* HISTORY */
+  .history-search { width:100%; padding:12px 14px; border:2px solid var(--border); border-radius:14px; background:var(--surface); font-family:'Nunito',sans-serif; font-size:14px; font-weight:600; color:var(--text); outline:none; margin-bottom:14px; }
+  .history-search:focus { border-color:var(--rose-mid); }
+
+  .history-card { background:var(--surface); border:2px solid var(--border); border-radius:16px; margin-bottom:12px; overflow:hidden; box-shadow:0 2px 8px #f4436008; }
+  .history-card-header { display:flex; justify-content:space-between; align-items:center; padding:13px 14px; cursor:pointer; }
+  .history-card-date { font-size:15px; font-weight:800; color:var(--text); }
+  .history-card-meta { font-size:11px; color:var(--text3); font-weight:600; margin-top:2px; }
+  .history-card-body { border-top:2px solid var(--border); padding:12px 14px; display:none; background:var(--surface2); }
+  .history-card-body.open { display:block; }
+  .history-ex-row { margin-bottom:10px; }
+  .history-ex-name { font-size:12px; font-weight:800; color:var(--text2); margin-bottom:5px; }
+  .history-set-pills { display:flex; flex-wrap:wrap; gap:6px; }
+  .history-set-pill { padding:4px 11px; border-radius:20px; font-size:11px; font-weight:700; }
+  .done-pill { background:var(--green-soft); color:#2d7a58; }
+  .skip-pill { background:var(--surface); border:2px solid var(--border); color:var(--text3); }
+
+  .empty-state { text-align:center; padding:32px 16px; color:var(--text3); font-size:13px; font-weight:600; line-height:1.9; }
+
+  /* TOAST */
+  .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(100px); background:linear-gradient(135deg,#e83b67,#f87096); color:#fff; padding:13px 26px; border-radius:30px; font-size:13px; font-weight:700; transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1); z-index:200; white-space:nowrap; box-shadow:0 4px 20px #f4436040; }
+  .toast.show { transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <div>
+        <div class="header-label">Full Body · 3× Week</div>
+        <div class="header-title">My Workouts 🌸</div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('log',this)">📋 Log</button>
+      <button class="tab-btn" onclick="switchTab('history',this)">📅 History</button>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- LOG TAB -->
+  <div class="tab-panel active" id="tab-log">
+    <div class="date-row">
+      <span class="date-label">📅 Date</span>
+      <input class="date-input" type="date" id="sessionDate">
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-header">
+        <span class="progress-label">✨ Session Progress</span>
+        <span class="progress-pct" id="progressPct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="section-label">Main Lifts</div>
+    <div id="mainList"></div>
+    <div class="section-label">Core 🌿</div>
+    <div id="coreList"></div>
+    <button class="complete-btn" onclick="completeSession()">🎉 Save Session</button>
+    <div class="rest-tip">
+      <strong>Rest:</strong> 60–90 sec between sets<br>
+      <strong>Progress:</strong> Hit all sets at 10 reps? Increase weight next session 💪<br>
+      <strong>Dead Bug:</strong> Keep lower back flat on the floor throughout
+    </div>
+  </div>
+
+  <!-- HISTORY TAB -->
+  <div class="tab-panel" id="tab-history">
+    <input class="history-search" type="text" placeholder="🔍 Search by date..." oninput="filterHistory(this.value)" id="historySearch">
+    <div id="historyList"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const MAIN = [
+  { name:"Leg Press",               pattern:"Squat",        muscles:"Quads · Glutes · Hamstrings",      icon:"🦵", color:"#5ebd8e", soft:"#d8f5e8" },
+  { name:"Cable Pull Through / RDL",pattern:"Hinge",        muscles:"Glutes · Hamstrings",               icon:"🍑", color:"#f87096", soft:"#ffe4ec" },
+  { name:"Chest Press",             pattern:"Horiz. Push",  muscles:"Chest · Front Delts · Triceps",    icon:"💪", color:"#6aacdf", soft:"#d6eefa" },
+  { name:"Seated Row",              pattern:"Horiz. Pull",  muscles:"Mid Back · Rear Delts · Biceps",   icon:"🏹", color:"#f9a060", soft:"#fdeee4" },
+  { name:"Lat Pulldown",            pattern:"Vert. Pull",   muscles:"Lats · Biceps · Rear Delts",       icon:"🌊", color:"#6aacdf", soft:"#d6eefa" },
+  { name:"Shoulder Press",          pattern:"Vert. Push",   muscles:"Deltoids · Triceps",               icon:"⬆️", color:"#c49fdf", soft:"#f2eafb" },
+];
+const CORE = [
+  { name:"Dead Bug", pattern:"Core", muscles:"Deep Core · Spinal Stabilisers", icon:"🐛", color:"#f87096", soft:"#ffe4ec", isCore:true },
+];
+const ALL = [...MAIN, ...CORE];
+const MC = MAIN.length;
+
+function defaultSets() {
+  return [
+    {w:'12',r:'10',done:false},
+    {w:'12',r:'10',done:false},
+    {w:'12',r:'10',done:false},
+  ];
+}
+
+let S = { currentSets:{}, history:[] };
+
+function load() { try { const s=localStorage.getItem('wt_v4'); if(s) S={...S,...JSON.parse(s)}; } catch(e){} }
+function save() { try { localStorage.setItem('wt_v4',JSON.stringify(S)); } catch(e){} }
+
+function todayStr() { return new Date().toISOString().split('T')[0]; }
+function getDateKey() { return document.getElementById('sessionDate').value || todayStr(); }
+
+function getSets(dk, ei) {
+  if(!S.currentSets[dk]) S.currentSets[dk]={};
+  if(!S.currentSets[dk][ei]) S.currentSets[dk][ei]={ sets:defaultSets() };
+  return S.currentSets[dk][ei];
+}
+
+function pct() {
+  const dk=getDateKey(); let tot=0,done=0;
+  for(let e=0;e<ALL.length;e++){ const s=getSets(dk,e).sets; tot+=s.length; done+=s.filter(x=>x.done).length; }
+  return tot===0?0:Math.round(done/tot*100);
+}
+
+function prevBest(ei) {
+  const cur=getDateKey();
+  const sorted=[...S.history].sort((a,b)=>b.date.localeCompare(a.date));
+  for(const h of sorted){
+    if(h.date>=cur) continue;
+    if(h.sets&&h.sets[ei]){ const c=h.sets[ei].filter(s=>s.done&&s.r); if(c.length){ const l=c[c.length-1]; return l.w?`${l.w}kg × ${l.r} reps`:`${l.r} reps`; } }
+  }
+  return null;
+}
+
+function updateBar() {
+  const p=pct();
+  document.getElementById('progressPct').textContent=p+'%';
+  const f=document.getElementById('progressFill');
+  f.style.width=p+'%'; f.classList.toggle('complete',p===100);
+}
+
+function toggleSet(ei,si) { const dk=getDateKey(); getSets(dk,ei).sets[si].done^=true; save(); renderEx(); updateBar(); }
+function updField(ei,si,field,val) { getSets(getDateKey(),ei).sets[si][field]=val; save(); }
+
+function addSet(ei) {
+  const dk=getDateKey(), se=getSets(dk,ei), last=se.sets[se.sets.length-1];
+  se.sets.push({w:last?last.w:'12',r:last?last.r:'10',done:false});
+  save(); renderEx(); updateBar();
+}
+
+function delSet(ei,si) {
+  const dk=getDateKey(), se=getSets(dk,ei);
+  if(se.sets.length<=1) return;
+  se.sets.splice(si,1); save(); renderEx(); updateBar();
+}
+
+function expand(k) {
+  const b=document.getElementById('b_'+k), c=document.getElementById('c_'+k);
+  if(!b) return; const o=b.classList.toggle('open'); c.textContent=o?'▴':'▾';
+}
+
+function card(ex,ei) {
+  const dk=getDateKey(), se=getSets(dk,ei);
+  const dc=se.sets.filter(s=>s.done).length, allDone=dc===se.sets.length&&se.sets.length>0;
+  const k=`ex_${ei}`, pb=prevBest(ei), ic=ei>=MC;
+
+  const rows=se.sets.map((s,si)=>`
+    <div class="set-row ${s.done?'done-row':''}">
+      <div class="set-num">${si+1}</div>
+      <input class="set-input" type="number" inputmode="decimal" value="${s.w}"
+        ${ic?'placeholder="—" style="opacity:0.3;pointer-events:none"':''}
+        oninput="updField(${ei},${si},'w',this.value)">
+      <input class="set-input" type="number" inputmode="numeric" value="${s.r}"
+        placeholder="${ic?'8 ea':'10'}"
+        oninput="updField(${ei},${si},'r',this.value)">
+      <button class="check-btn ${s.done?'checked':''}" onclick="toggleSet(${ei},${si})">✓</button>
+      <button class="del-btn" onclick="delSet(${ei},${si})">×</button>
+    </div>`).join('');
+
+  return `
+    <div class="ex-card ${allDone?'done':''}">
+      <div class="ex-header" onclick="expand('${k}')">
+        <div class="ex-icon" style="background:${ex.soft}">${ex.icon}</div>
+        <div class="ex-info">
+          <div class="ex-pattern-tag" style="color:${ex.color};background:${ex.soft}">${ex.pattern}</div>
+          <div class="ex-name">${ex.name}</div>
+          <div class="ex-muscles">${ex.muscles}</div>
+        </div>
+        <div class="ex-right">
+          ${allDone?'<span style="font-size:18px">✅</span>':`<div class="ex-sets-count">${dc}/${se.sets.length}</div>`}
+          <div class="ex-chevron" id="c_${k}">▾</div>
+        </div>
+      </div>
+      <div class="ex-body" id="b_${k}">
+        <div class="sets-grid-header"><div>Set</div><div>${ic?'—':'kg'}</div><div>Reps</div><div>✓</div><div></div></div>
+        ${rows}
+        <button class="add-set-btn" onclick="addSet(${ei})">+ Add Set</button>
+        <div class="prev-best">${pb?`⭐ Last time: <span>${pb}</span>`:'✨ First session — you got this!'}</div>
+        ${ic?'<div class="core-tip">💡 Lower back stays flat on the floor the whole time. Slow and controlled beats fast every time!</div>':''}
+      </div>
+    </div>`;
+}
+
+function renderEx() {
+  document.getElementById('mainList').innerHTML=MAIN.map((ex,i)=>card(ex,i)).join('');
+  document.getElementById('coreList').innerHTML=CORE.map((ex,i)=>card(ex,MC+i)).join('');
+  updateBar();
+}
+
+function completeSession() {
+  const dk=getDateKey();
+  const sets={};
+  for(let e=0;e<ALL.length;e++) sets[e]=JSON.parse(JSON.stringify(getSets(dk,e).sets));
+  const entry={ date:dk, displayDate:formatDisplayDate(dk), completion:pct(), sets };
+  const idx=S.history.findIndex(h=>h.date===dk);
+  if(idx>=0) S.history[idx]=entry; else S.history.unshift(entry);
+  S.history.sort((a,b)=>b.date.localeCompare(a.date));
+  if(S.history.length>60) S.history=S.history.slice(0,60);
+  save(); showToast('Saved! Amazing work today 🌸💪'); renderHistory();
+}
+
+function formatDisplayDate(str) {
+  const d=new Date(str+'T00:00:00');
+  return d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+
+function renderHistory(filter='') {
+  const c=document.getElementById('historyList');
+  if(!S.history.length){ c.innerHTML='<div class="empty-state">No sessions saved yet 🌱<br>Complete a session in the Log tab<br>and it will appear here!</div>'; return; }
+  const filtered=filter?S.history.filter(h=>h.displayDate.toLowerCase().includes(filter.toLowerCase())||h.date.includes(filter)):S.history;
+  if(!filtered.length){ c.innerHTML='<div class="empty-state">No sessions match that search 🔍</div>'; return; }
+  c.innerHTML=filtered.map((h,hi)=>{
+    const exRows=ALL.map((ex,ei)=>{
+      const sets=h.sets&&h.sets[ei]?h.sets[ei]:[];
+      const pills=sets.map(s=>`<span class="history-set-pill ${s.done?'done-pill':'skip-pill'}">${s.done?(s.w&&!ALL[ei].isCore?`${s.w}kg × ${s.r}`:`${s.r} reps`):'—'}</span>`).join('');
+      return `<div class="history-ex-row"><div class="history-ex-name">${ex.icon} ${ex.name}</div><div class="history-set-pills">${pills||'<span class="history-set-pill skip-pill">no data</span>'}</div></div>`;
+    }).join('');
+    return `
+      <div class="history-card">
+        <div class="history-card-header" onclick="expandH('hb_${hi}','hc_${hi}')">
+          <div>
+            <div class="history-card-date">${h.displayDate}</div>
+            <div class="history-card-meta">${h.completion}% complete</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:14px;font-weight:800;color:${h.completion===100?'var(--green)':'var(--rose)'}">${h.completion===100?'✅':h.completion+'%'}</span>
+            <span style="font-size:12px;color:var(--text3)" id="hc_${hi}">▾</span>
+          </div>
+        </div>
+        <div class="history-card-body" id="hb_${hi}">${exRows}</div>
+      </div>`;
+  }).join('');
+}
+
+function expandH(bid,cid) {
+  const b=document.getElementById(bid),c=document.getElementById(cid);
+  if(!b) return; const o=b.classList.toggle('open'); c.textContent=o?'▴':'▾';
+}
+
+function filterHistory(val) { renderHistory(val); }
+
+function switchTab(t, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  btn.classList.add('active');
+  if(t==='history') renderHistory(document.getElementById('historySearch').value);
+}
+
+function showToast(msg) {
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+load();
+document.getElementById('sessionDate').value=todayStr();
+document.getElementById('sessionDate').addEventListener('change',()=>{ renderEx(); updateBar(); });
+renderEx();
+renderHistory();
+</script>
+</body>
+</html>
