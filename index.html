@@ -7,58 +7,26 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #fff5f7;
-    --surface: #ffffff;
-    --surface2: #fff0f3;
-    --border: #fcd5de;
-    --border2: #f9a8b8;
-    --text: #5c2d3a;
-    --text2: #a05068;
-    --text3: #d4a0b0;
-    --rose: #f43f72;
-    --rose-mid: #fb7da0;
-    --rose-soft: #ffe4ec;
-    --rose-pale: #fff0f4;
-    --green: #5ebd8e;
-    --green-mid: #86d4ae;
-    --green-soft: #d8f5e8;
-    --green-pale: #edfaf3;
-    --blue: #6aacdf;
-    --blue-mid: #93c8ef;
-    --blue-soft: #d6eefa;
-    --blue-pale: #edf6fd;
-    --peach: #fba77a;
-    --peach-soft: #fdeee4;
-    --lilac: #c49fdf;
-    --lilac-soft: #f2eafb;
+    --bg:#fff5f7; --surface:#ffffff; --surface2:#fff0f3; --border:#fcd5de; --border2:#f9a8b8;
+    --text:#5c2d3a; --text2:#a05068; --text3:#d4a0b0;
+    --rose:#f43f72; --rose-mid:#fb7da0; --rose-soft:#ffe4ec; --rose-pale:#fff5f8;
+    --green:#5ebd8e; --green-mid:#86d4ae; --green-soft:#d8f5e8; --green-pale:#edfaf3;
+    --blue:#6aacdf; --blue-mid:#93c8ef; --blue-soft:#d6eefa; --blue-pale:#edf6fd;
+    --peach:#fba77a; --peach-soft:#fdeee4;
+    --lilac:#c49fdf; --lilac-soft:#f2eafb;
   }
   * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
   body { background:var(--bg); color:var(--text); font-family:'Nunito',sans-serif; min-height:100vh; }
-  body::before {
-    content:'';
-    position:fixed; inset:0;
-    background-image:
-      radial-gradient(circle at 20% 20%, #fcd5de44 0%, transparent 50%),
-      radial-gradient(circle at 80% 80%, #d6eefa44 0%, transparent 50%),
-      radial-gradient(circle at 60% 10%, #d8f5e844 0%, transparent 40%);
-    pointer-events:none; z-index:0;
-  }
+  body::before { content:''; position:fixed; inset:0; background-image:radial-gradient(circle at 20% 20%,#fcd5de44 0%,transparent 50%),radial-gradient(circle at 80% 80%,#d6eefa44 0%,transparent 50%),radial-gradient(circle at 60% 10%,#d8f5e844 0%,transparent 40%); pointer-events:none; z-index:0; }
 
   /* HEADER */
-  .header {
-    background: linear-gradient(135deg, #f9637a 0%, #fb8fa6 45%, #f9b8cb 100%);
-    padding:22px 16px 0;
-    position:sticky; top:0; z-index:50;
-    box-shadow:0 4px 24px #f4436030;
-  }
+  .header { background:linear-gradient(135deg,#f9637a 0%,#fb8fa6 45%,#f9b8cb 100%); padding:22px 16px 0; position:sticky; top:0; z-index:50; box-shadow:0 4px 24px #f4436030; }
   .header-inner { max-width:480px; margin:0 auto; }
   .header-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
   .header-label { font-size:10px; letter-spacing:2px; color:#ffe0e8; text-transform:uppercase; margin-bottom:3px; font-weight:700; }
-  .header-title { font-family:'Playfair Display',serif; font-size:27px; color:#fff; font-style:italic; text-shadow:0 2px 8px #f4436030; }
-
-  /* TABS */
-  .tab-bar { display:flex; gap:0; }
-  .tab-btn { flex:1; padding:12px 4px; border:none; background:transparent; color:#ffd6e0a0; font-family:'Nunito',sans-serif; font-size:13px; font-weight:700; cursor:pointer; border-bottom:3px solid transparent; transition:all 0.2s; }
+  .header-title { font-family:'Playfair Display',serif; font-size:27px; color:#fff; font-style:italic; }
+  .tab-bar { display:flex; }
+  .tab-btn { flex:1; padding:12px 4px; border:none; background:transparent; color:#ffd6e0a0; font-family:'Nunito',sans-serif; font-size:12px; font-weight:700; cursor:pointer; border-bottom:3px solid transparent; transition:all 0.2s; }
   .tab-btn.active { color:#fff; border-bottom:3px solid #fff; }
 
   /* CONTENT */
@@ -67,30 +35,38 @@
   .tab-panel.active { display:block; }
 
   /* DATE ROW */
-  .date-row { display:flex; align-items:center; gap:10px; background:var(--surface); border:2px solid var(--border); border-radius:16px; padding:12px 14px; margin-bottom:14px; box-shadow:0 2px 10px #f4436012; }
+  .date-row { display:flex; align-items:center; gap:10px; background:var(--surface); border:2px solid var(--border); border-radius:16px; padding:12px 14px; margin-bottom:12px; box-shadow:0 2px 10px #f4436012; }
   .date-label { font-size:12px; font-weight:800; color:var(--text2); white-space:nowrap; }
   .date-input { flex:1; border:none; background:transparent; font-family:'Nunito',sans-serif; font-size:14px; font-weight:700; color:var(--text); outline:none; }
 
+  /* NOTES */
+  .notes-wrap { background:var(--surface); border:2px solid var(--blue-soft); border-radius:16px; padding:12px 14px; margin-bottom:12px; box-shadow:0 2px 8px #6aacdf10; }
+  .notes-label { font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--blue); margin-bottom:8px; display:flex; align-items:center; gap:6px; cursor:pointer; user-select:none; }
+  .notes-label span { margin-left:auto; font-size:12px; color:var(--text3); }
+  .notes-textarea { width:100%; border:none; background:var(--blue-pale); border-radius:10px; padding:10px 12px; font-family:'Nunito',sans-serif; font-size:13px; font-weight:600; color:var(--text); outline:none; resize:none; min-height:72px; line-height:1.6; display:none; }
+  .notes-textarea.open { display:block; }
+  .notes-textarea::placeholder { color:var(--text3); }
+
   /* PROGRESS */
-  .progress-wrap { background:var(--surface); border-radius:16px; padding:14px 16px; margin-bottom:14px; box-shadow:0 2px 12px #f4436010; border:2px solid var(--border); }
+  .progress-wrap { background:var(--surface); border-radius:16px; padding:14px 16px; margin-bottom:14px; border:2px solid var(--border); box-shadow:0 2px 10px #f4436010; }
   .progress-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
   .progress-label { font-size:12px; font-weight:700; color:var(--text2); }
   .progress-pct { font-size:14px; font-weight:800; color:var(--rose); }
   .progress-track { height:9px; background:var(--rose-soft); border-radius:9px; overflow:hidden; }
-  .progress-fill { height:100%; border-radius:9px; transition:width 0.4s; background:linear-gradient(90deg, var(--rose), var(--rose-mid)); }
-  .progress-fill.complete { background:linear-gradient(90deg, var(--green), var(--green-mid)); }
+  .progress-fill { height:100%; border-radius:9px; transition:width 0.4s; background:linear-gradient(90deg,var(--rose),var(--rose-mid)); }
+  .progress-fill.complete { background:linear-gradient(90deg,var(--green),var(--green-mid)); }
 
   /* SECTION LABEL */
-  .section-label { font-size:10px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--text3); margin:18px 0 10px 2px; }
+  .section-label { font-size:10px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--text3); margin:16px 0 10px 2px; }
 
   /* EXERCISE CARDS */
-  .ex-card { background:var(--surface); border:2px solid var(--border); border-radius:18px; margin-bottom:10px; overflow:hidden; box-shadow:0 2px 10px #f4436008; transition:border-color 0.2s, background 0.2s; }
+  .ex-card { background:var(--surface); border:2px solid var(--border); border-radius:18px; margin-bottom:10px; overflow:hidden; box-shadow:0 2px 8px #f4436008; transition:border-color 0.2s,background 0.2s; }
   .ex-card.done { border-color:var(--green-mid); background:var(--green-pale); }
   .ex-header { padding:13px 14px; cursor:pointer; display:flex; align-items:center; user-select:none; }
   .ex-icon { width:42px; height:42px; border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:19px; margin-right:11px; flex-shrink:0; }
-  .ex-info { flex:1; }
+  .ex-info { flex:1; min-width:0; }
   .ex-pattern-tag { display:inline-block; font-size:9px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:2px 9px; border-radius:20px; margin-bottom:4px; }
-  .ex-name { font-size:15px; font-weight:800; color:var(--text); margin-bottom:2px; }
+  .ex-name { font-size:15px; font-weight:800; color:var(--text); margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .ex-muscles { font-size:11px; color:var(--text3); font-weight:600; }
   .ex-right { text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0; margin-left:8px; }
   .ex-sets-count { font-size:12px; font-weight:800; color:var(--rose-mid); }
@@ -104,37 +80,30 @@
   .set-row { display:grid; grid-template-columns:26px 1fr 1fr 40px 32px; gap:6px; margin-bottom:8px; align-items:center; transition:opacity 0.2s; }
   .set-row.done-row { opacity:0.38; }
   .set-num { font-size:13px; font-weight:800; color:var(--text3); text-align:center; }
-
   .set-input { background:var(--surface); border:2px solid var(--border); border-radius:10px; padding:9px 6px; color:var(--text); font-family:'Nunito',sans-serif; font-size:14px; font-weight:700; outline:none; width:100%; -webkit-appearance:none; transition:border-color 0.15s; text-align:center; }
   .set-input:focus { border-color:var(--rose-mid); }
   .set-input::placeholder { color:var(--text3); font-weight:600; }
-
   .check-btn { width:38px; height:38px; border-radius:10px; border:2px solid var(--border2); background:var(--surface); color:var(--text3); font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; flex-shrink:0; }
   .check-btn.checked { border-color:var(--green); background:var(--green-soft); color:var(--green); }
-
   .del-btn { width:28px; height:28px; border-radius:8px; border:none; background:transparent; color:var(--text3); font-size:17px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; padding:0; transition:color 0.15s; }
   .del-btn:active { color:var(--rose); }
-
-  .add-set-btn { width:100%; margin-top:10px; padding:9px; border:2px dashed var(--border2); border-radius:10px; background:transparent; color:var(--text2); font-family:'Nunito',sans-serif; font-size:12px; font-weight:700; cursor:pointer; transition:all 0.15s; }
+  .add-set-btn { width:100%; margin-top:10px; padding:9px; border:2px dashed var(--border2); border-radius:10px; background:transparent; color:var(--text2); font-family:'Nunito',sans-serif; font-size:12px; font-weight:700; cursor:pointer; }
   .add-set-btn:active { background:var(--rose-pale); }
-
   .prev-best { margin-top:10px; padding:8px 12px; background:var(--surface); border:2px solid var(--border); border-radius:10px; font-size:11px; font-weight:700; color:var(--text3); }
   .prev-best span { color:var(--rose); }
-
   .core-tip { margin-top:8px; padding:9px 12px; background:var(--blue-pale); border:2px solid var(--blue-soft); border-radius:10px; font-size:11px; font-weight:700; color:#3a7aaa; line-height:1.6; }
 
   /* SAVE BTN */
-  .complete-btn { width:100%; padding:17px; margin-top:12px; background:linear-gradient(135deg, #e83b67, #f87096); border:none; border-radius:16px; color:#fff; font-family:'Nunito',sans-serif; font-size:17px; font-weight:800; cursor:pointer; box-shadow:0 4px 18px #f4436030; transition:transform 0.1s; }
+  .complete-btn { width:100%; padding:17px; margin-top:14px; background:linear-gradient(135deg,#e83b67,#f87096); border:none; border-radius:16px; color:#fff; font-family:'Nunito',sans-serif; font-size:17px; font-weight:800; cursor:pointer; box-shadow:0 4px 18px #f4436030; transition:transform 0.1s; }
   .complete-btn:active { transform:scale(0.98); }
 
   /* REST TIP */
-  .rest-tip { margin-top:16px; padding:14px 16px; background:var(--blue-pale); border:2px solid var(--blue-soft); border-radius:16px; font-size:12px; font-weight:600; color:#3a6080; line-height:1.8; }
+  .rest-tip { margin-top:14px; padding:14px 16px; background:var(--blue-pale); border:2px solid var(--blue-soft); border-radius:16px; font-size:12px; font-weight:600; color:#3a6080; line-height:1.8; }
   .rest-tip strong { color:var(--blue); font-weight:800; }
 
   /* HISTORY */
   .history-search { width:100%; padding:12px 14px; border:2px solid var(--border); border-radius:14px; background:var(--surface); font-family:'Nunito',sans-serif; font-size:14px; font-weight:600; color:var(--text); outline:none; margin-bottom:14px; }
   .history-search:focus { border-color:var(--rose-mid); }
-
   .history-card { background:var(--surface); border:2px solid var(--border); border-radius:16px; margin-bottom:12px; overflow:hidden; box-shadow:0 2px 8px #f4436008; }
   .history-card-header { display:flex; justify-content:space-between; align-items:center; padding:13px 14px; cursor:pointer; }
   .history-card-date { font-size:15px; font-weight:800; color:var(--text); }
@@ -147,12 +116,44 @@
   .history-set-pill { padding:4px 11px; border-radius:20px; font-size:11px; font-weight:700; }
   .done-pill { background:var(--green-soft); color:#2d7a58; }
   .skip-pill { background:var(--surface); border:2px solid var(--border); color:var(--text3); }
+  .history-notes { margin-top:10px; padding:10px 12px; background:var(--blue-pale); border:2px solid var(--blue-soft); border-radius:10px; font-size:12px; font-weight:600; color:#3a6080; line-height:1.6; }
+  .history-notes-label { font-size:10px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--blue); margin-bottom:4px; }
 
-  .empty-state { text-align:center; padding:32px 16px; color:var(--text3); font-size:13px; font-weight:600; line-height:1.9; }
+  /* SETTINGS */
+  .settings-card { background:var(--surface); border:2px solid var(--border); border-radius:18px; padding:16px; margin-bottom:14px; box-shadow:0 2px 8px #f4436008; }
+  .settings-card-title { font-size:13px; font-weight:800; color:var(--text); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .settings-input { width:100%; padding:11px 13px; border:2px solid var(--border); border-radius:12px; background:var(--bg); font-family:'Nunito',sans-serif; font-size:14px; font-weight:600; color:var(--text); outline:none; margin-bottom:10px; transition:border-color 0.15s; }
+  .settings-input:focus { border-color:var(--rose-mid); }
+  .settings-select { width:100%; padding:11px 13px; border:2px solid var(--border); border-radius:12px; background:var(--bg); font-family:'Nunito',sans-serif; font-size:14px; font-weight:600; color:var(--text); outline:none; margin-bottom:10px; -webkit-appearance:none; }
+  .settings-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+  .add-ex-btn { width:100%; padding:12px; background:linear-gradient(135deg,#e83b67,#f87096); border:none; border-radius:12px; color:#fff; font-family:'Nunito',sans-serif; font-size:14px; font-weight:800; cursor:pointer; box-shadow:0 3px 12px #f4436025; }
+  .add-ex-btn:active { opacity:0.9; }
+
+  .custom-ex-list { margin-top:4px; }
+  .custom-ex-item { display:flex; align-items:center; justify-content:space-between; padding:11px 13px; background:var(--bg); border:2px solid var(--border); border-radius:12px; margin-bottom:8px; }
+  .custom-ex-info { flex:1; min-width:0; }
+  .custom-ex-name { font-size:13px; font-weight:800; color:var(--text); }
+  .custom-ex-meta { font-size:11px; color:var(--text3); font-weight:600; margin-top:2px; }
+  .custom-ex-del { width:30px; height:30px; border:none; background:var(--rose-soft); border-radius:8px; color:var(--rose); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+  .emoji-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-bottom:10px; }
+  .emoji-opt { width:36px; height:36px; border:2px solid var(--border); border-radius:10px; background:var(--surface); font-size:17px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
+  .emoji-opt.selected { border-color:var(--rose-mid); background:var(--rose-soft); }
+
+  .color-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-bottom:10px; }
+  .color-opt { width:36px; height:36px; border-radius:10px; border:3px solid transparent; cursor:pointer; transition:all 0.15s; }
+  .color-opt.selected { border-color:var(--text); transform:scale(1.1); }
+
+  .default-ex-list { }
+  .default-ex-item { display:flex; align-items:center; padding:10px 13px; background:var(--bg); border:2px solid var(--border); border-radius:12px; margin-bottom:8px; gap:10px; font-size:13px; font-weight:700; color:var(--text2); }
+
+  .empty-state { text-align:center; padding:28px 16px; color:var(--text3); font-size:13px; font-weight:600; line-height:1.9; }
 
   /* TOAST */
-  .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(100px); background:linear-gradient(135deg,#e83b67,#f87096); color:#fff; padding:13px 26px; border-radius:30px; font-size:13px; font-weight:700; transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1); z-index:200; white-space:nowrap; box-shadow:0 4px 20px #f4436040; }
+  .toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(100px); background:linear-gradient(135deg,#e83b67,#f87096); color:#fff; padding:13px 26px; border-radius:30px; font-size:13px; font-weight:700; transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1); z-index:200; white-space:nowrap; box-shadow:0 4px 20px #f4436040; }
   .toast.show { transform:translateX(-50%) translateY(0); }
+
+  select option { font-family:'Nunito',sans-serif; }
 </style>
 </head>
 <body>
@@ -168,6 +169,7 @@
     <div class="tab-bar">
       <button class="tab-btn active" onclick="switchTab('log',this)">📋 Log</button>
       <button class="tab-btn" onclick="switchTab('history',this)">📅 History</button>
+      <button class="tab-btn" onclick="switchTab('settings',this)">⚙️ Settings</button>
     </div>
   </div>
 </div>
@@ -180,6 +182,15 @@
       <span class="date-label">📅 Date</span>
       <input class="date-input" type="date" id="sessionDate">
     </div>
+
+    <!-- NOTES -->
+    <div class="notes-wrap">
+      <div class="notes-label" onclick="toggleNotes()">
+        📝 Session Notes <span id="notesChev">▾ tap to add</span>
+      </div>
+      <textarea class="notes-textarea" id="notesArea" placeholder="How are you feeling? Any pain? Sleep quality? Energy level today..." oninput="saveNotes()"></textarea>
+    </div>
+
     <div class="progress-wrap">
       <div class="progress-header">
         <span class="progress-label">✨ Session Progress</span>
@@ -189,11 +200,15 @@
         <div class="progress-fill" id="progressFill" style="width:0%"></div>
       </div>
     </div>
+
     <div class="section-label">Main Lifts</div>
     <div id="mainList"></div>
     <div class="section-label">Core 🌿</div>
     <div id="coreList"></div>
+    <div id="customList"></div>
+
     <button class="complete-btn" onclick="completeSession()">🎉 Save Session</button>
+
     <div class="rest-tip">
       <strong>Rest:</strong> 60–90 sec between sets<br>
       <strong>Progress:</strong> Hit all sets at 10 reps? Increase weight next session 💪<br>
@@ -207,59 +222,136 @@
     <div id="historyList"></div>
   </div>
 
+  <!-- SETTINGS TAB -->
+  <div class="tab-panel" id="tab-settings">
+
+    <!-- Add exercise -->
+    <div class="settings-card">
+      <div class="settings-card-title">➕ Add New Exercise</div>
+
+      <input class="settings-input" type="text" id="newExName" placeholder="Exercise name (e.g. Hip Thrust)">
+      <input class="settings-input" type="text" id="newExMuscles" placeholder="Muscles worked (e.g. Glutes · Hamstrings)">
+
+      <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Category</div>
+      <select class="settings-select" id="newExPattern">
+        <option value="Squat">🦵 Squat</option>
+        <option value="Hinge">🔄 Hinge</option>
+        <option value="Horiz. Push">💪 Horizontal Push</option>
+        <option value="Horiz. Pull">🏹 Horizontal Pull</option>
+        <option value="Vert. Pull">🌊 Vertical Pull</option>
+        <option value="Vert. Push">⬆️ Vertical Push</option>
+        <option value="Core">🌿 Core</option>
+        <option value="Glutes">🍑 Glutes</option>
+        <option value="Arms">💅 Arms</option>
+        <option value="Cardio">🏃 Cardio</option>
+        <option value="Other">✨ Other</option>
+      </select>
+
+      <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Pick an icon</div>
+      <div class="emoji-grid" id="emojiGrid"></div>
+
+      <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Pick a colour</div>
+      <div class="color-grid" id="colorGrid"></div>
+
+      <div class="settings-row">
+        <div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Default kg</div>
+          <input class="settings-input" type="number" id="newExKg" placeholder="12" style="margin-bottom:0">
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Default reps</div>
+          <input class="settings-input" type="number" id="newExReps" placeholder="10" style="margin-bottom:0">
+        </div>
+      </div>
+
+      <button class="add-ex-btn" onclick="addCustomExercise()" style="margin-top:12px">Add Exercise</button>
+    </div>
+
+    <!-- Custom exercises list -->
+    <div class="settings-card">
+      <div class="settings-card-title">🌸 My Custom Exercises</div>
+      <div class="custom-ex-list" id="customExList"></div>
+    </div>
+
+    <!-- Default exercises info -->
+    <div class="settings-card">
+      <div class="settings-card-title">📋 Default Exercises</div>
+      <div class="default-ex-list" id="defaultExList"></div>
+    </div>
+
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const MAIN = [
-  { name:"Leg Press",               pattern:"Squat",        muscles:"Quads · Glutes · Hamstrings",      icon:"🦵", color:"#5ebd8e", soft:"#d8f5e8" },
-  { name:"Cable Pull Through / RDL",pattern:"Hinge",        muscles:"Glutes · Hamstrings",               icon:"🍑", color:"#f87096", soft:"#ffe4ec" },
-  { name:"Chest Press",             pattern:"Horiz. Push",  muscles:"Chest · Front Delts · Triceps",    icon:"💪", color:"#6aacdf", soft:"#d6eefa" },
-  { name:"Seated Row",              pattern:"Horiz. Pull",  muscles:"Mid Back · Rear Delts · Biceps",   icon:"🏹", color:"#f9a060", soft:"#fdeee4" },
-  { name:"Lat Pulldown",            pattern:"Vert. Pull",   muscles:"Lats · Biceps · Rear Delts",       icon:"🌊", color:"#6aacdf", soft:"#d6eefa" },
-  { name:"Shoulder Press",          pattern:"Vert. Push",   muscles:"Deltoids · Triceps",               icon:"⬆️", color:"#c49fdf", soft:"#f2eafb" },
+// ─── DEFAULT EXERCISES ───────────────────────────────────────────────
+const DEFAULT_EX = [
+  { name:"Leg Press",               pattern:"Squat",       muscles:"Quads · Glutes · Hamstrings",    icon:"🦵", color:"#5ebd8e", soft:"#d8f5e8", defW:12, defR:10 },
+  { name:"Cable Pull Through / RDL",pattern:"Hinge",       muscles:"Glutes · Hamstrings",            icon:"🍑", color:"#f87096", soft:"#ffe4ec", defW:12, defR:10 },
+  { name:"Chest Press",             pattern:"Horiz. Push", muscles:"Chest · Front Delts · Triceps", icon:"💪", color:"#6aacdf", soft:"#d6eefa", defW:12, defR:10 },
+  { name:"Seated Row",              pattern:"Horiz. Pull", muscles:"Mid Back · Rear Delts · Biceps",icon:"🏹", color:"#fba77a", soft:"#fdeee4", defW:12, defR:10 },
+  { name:"Lat Pulldown",            pattern:"Vert. Pull",  muscles:"Lats · Biceps · Rear Delts",    icon:"🌊", color:"#6aacdf", soft:"#d6eefa", defW:12, defR:10 },
+  { name:"Shoulder Press",          pattern:"Vert. Push",  muscles:"Deltoids · Triceps",            icon:"⬆️", color:"#c49fdf", soft:"#f2eafb", defW:12, defR:10 },
 ];
-const CORE = [
-  { name:"Dead Bug", pattern:"Core", muscles:"Deep Core · Spinal Stabilisers", icon:"🐛", color:"#f87096", soft:"#ffe4ec", isCore:true },
+const CORE_EX = [
+  { name:"Dead Bug", pattern:"Core", muscles:"Deep Core · Spinal Stabilisers", icon:"🐛", color:"#f87096", soft:"#ffe4ec", defW:0, defR:8, isCore:true },
 ];
-const ALL = [...MAIN, ...CORE];
-const MC = MAIN.length;
 
-function defaultSets() {
-  return [
-    {w:'12',r:'10',done:false},
-    {w:'12',r:'10',done:false},
-    {w:'12',r:'10',done:false},
-  ];
-}
+const EMOJIS = ["🏋️","🦵","💪","🏹","🌊","⬆️","🍑","🐛","🔥","⭐","🌸","💫","🎯","🏃","🧘","🤸","🦾","💅","🌿","🏆","❤️","✨","🎀","💙","💚"];
+const COLORS = ["#f87096","#5ebd8e","#6aacdf","#c49fdf","#fba77a","#f4c842","#e05c9c","#4db8a0","#5b8ff9","#a07cf5","#f97316","#10b981","#3b82f6","#8b5cf6"];
 
-let S = { currentSets:{}, history:[] };
+// ─── STATE ──────────────────────────────────────────────────────────
+let S = { currentSets:{}, notes:{}, history:[], customEx:[] };
+let selectedEmoji = EMOJIS[0];
+let selectedColor = COLORS[0];
 
-function load() { try { const s=localStorage.getItem('wt_v4'); if(s) S={...S,...JSON.parse(s)}; } catch(e){} }
-function save() { try { localStorage.setItem('wt_v4',JSON.stringify(S)); } catch(e){} }
+function load() { try { const s=localStorage.getItem('wt_v5'); if(s) S={...S,...JSON.parse(s)}; } catch(e){} }
+function save() { try { localStorage.setItem('wt_v5',JSON.stringify(S)); } catch(e){} }
 
+// ─── HELPERS ────────────────────────────────────────────────────────
 function todayStr() { return new Date().toISOString().split('T')[0]; }
 function getDateKey() { return document.getElementById('sessionDate').value || todayStr(); }
 
+function allExercises() {
+  return [
+    ...DEFAULT_EX,
+    ...CORE_EX,
+    ...S.customEx,
+  ];
+}
+
+function hexToSoft(hex) {
+  return hex + '28';
+}
+
 function getSets(dk, ei) {
   if(!S.currentSets[dk]) S.currentSets[dk]={};
-  if(!S.currentSets[dk][ei]) S.currentSets[dk][ei]={ sets:defaultSets() };
+  if(!S.currentSets[dk][ei]) {
+    const ex = allExercises()[ei];
+    const w = ex ? (ex.defW||12) : 12;
+    const r = ex ? (ex.defR||10) : 10;
+    S.currentSets[dk][ei]={ sets:[
+      {w:w?String(w):'', r:String(r), done:false},
+      {w:w?String(w):'', r:String(r), done:false},
+      {w:w?String(w):'', r:String(r), done:false},
+    ]};
+  }
   return S.currentSets[dk][ei];
 }
 
 function pct() {
-  const dk=getDateKey(); let tot=0,done=0;
-  for(let e=0;e<ALL.length;e++){ const s=getSets(dk,e).sets; tot+=s.length; done+=s.filter(x=>x.done).length; }
+  const dk=getDateKey(), all=allExercises(); let tot=0,done=0;
+  for(let e=0;e<all.length;e++){ const s=getSets(dk,e).sets; tot+=s.length; done+=s.filter(x=>x.done).length; }
   return tot===0?0:Math.round(done/tot*100);
 }
 
 function prevBest(ei) {
-  const cur=getDateKey();
+  const cur=getDateKey(), all=allExercises();
   const sorted=[...S.history].sort((a,b)=>b.date.localeCompare(a.date));
   for(const h of sorted){
     if(h.date>=cur) continue;
-    if(h.sets&&h.sets[ei]){ const c=h.sets[ei].filter(s=>s.done&&s.r); if(c.length){ const l=c[c.length-1]; return l.w?`${l.w}kg × ${l.r} reps`:`${l.r} reps`; } }
+    if(h.sets&&h.sets[ei]){ const c=h.sets[ei].filter(s=>s.done&&s.r); if(c.length){ const l=c[c.length-1]; return l.w&&l.w!='0'?`${l.w}kg × ${l.r} reps`:`${l.r} reps`; } }
   }
   return null;
 }
@@ -271,8 +363,26 @@ function updateBar() {
   f.style.width=p+'%'; f.classList.toggle('complete',p===100);
 }
 
+// ─── NOTES ──────────────────────────────────────────────────────────
+function toggleNotes() {
+  const ta=document.getElementById('notesArea'), ch=document.getElementById('notesChev');
+  const o=ta.classList.toggle('open');
+  ch.textContent=o?'▴ tap to hide':'▾ tap to add';
+  if(o) { ta.value=S.notes[getDateKey()]||''; ta.focus(); }
+}
+
+function saveNotes() {
+  S.notes[getDateKey()]=document.getElementById('notesArea').value; save();
+}
+
+function loadNotesForDate() {
+  const ta=document.getElementById('notesArea');
+  ta.value=S.notes[getDateKey()]||'';
+}
+
+// ─── SETS ────────────────────────────────────────────────────────────
 function toggleSet(ei,si) { const dk=getDateKey(); getSets(dk,ei).sets[si].done^=true; save(); renderEx(); updateBar(); }
-function updField(ei,si,field,val) { getSets(getDateKey(),ei).sets[si][field]=val; save(); }
+function updField(ei,si,f,v) { getSets(getDateKey(),ei).sets[si][f]=v; save(); }
 
 function addSet(ei) {
   const dk=getDateKey(), se=getSets(dk,ei), last=se.sets[se.sets.length-1];
@@ -286,15 +396,19 @@ function delSet(ei,si) {
   se.sets.splice(si,1); save(); renderEx(); updateBar();
 }
 
+// ─── CARD BUILDER ────────────────────────────────────────────────────
 function expand(k) {
-  const b=document.getElementById('b_'+k), c=document.getElementById('c_'+k);
+  const b=document.getElementById('b_'+k),c=document.getElementById('c_'+k);
   if(!b) return; const o=b.classList.toggle('open'); c.textContent=o?'▴':'▾';
 }
 
-function card(ex,ei) {
+function colorSoft(hex) { return hex+'22'; }
+
+function card(ex, ei) {
   const dk=getDateKey(), se=getSets(dk,ei);
   const dc=se.sets.filter(s=>s.done).length, allDone=dc===se.sets.length&&se.sets.length>0;
-  const k=`ex_${ei}`, pb=prevBest(ei), ic=ei>=MC;
+  const k=`ex_${ei}`, pb=prevBest(ei), ic=!!ex.isCore;
+  const soft=ex.soft||colorSoft(ex.color);
 
   const rows=se.sets.map((s,si)=>`
     <div class="set-row ${s.done?'done-row':''}">
@@ -312,9 +426,9 @@ function card(ex,ei) {
   return `
     <div class="ex-card ${allDone?'done':''}">
       <div class="ex-header" onclick="expand('${k}')">
-        <div class="ex-icon" style="background:${ex.soft}">${ex.icon}</div>
+        <div class="ex-icon" style="background:${soft}">${ex.icon}</div>
         <div class="ex-info">
-          <div class="ex-pattern-tag" style="color:${ex.color};background:${ex.soft}">${ex.pattern}</div>
+          <div class="ex-pattern-tag" style="color:${ex.color};background:${soft}">${ex.pattern}</div>
           <div class="ex-name">${ex.name}</div>
           <div class="ex-muscles">${ex.muscles}</div>
         </div>
@@ -327,23 +441,36 @@ function card(ex,ei) {
         <div class="sets-grid-header"><div>Set</div><div>${ic?'—':'kg'}</div><div>Reps</div><div>✓</div><div></div></div>
         ${rows}
         <button class="add-set-btn" onclick="addSet(${ei})">+ Add Set</button>
-        <div class="prev-best">${pb?`⭐ Last time: <span>${pb}</span>`:'✨ First session — you got this!'}</div>
-        ${ic?'<div class="core-tip">💡 Lower back stays flat on the floor the whole time. Slow and controlled beats fast every time!</div>':''}
+        <div class="prev-best">${pb?`⭐ Last time: <span>${pb}</span>`:'✨ First time — you got this!'}</div>
+        ${ic?'<div class="core-tip">💡 Lower back stays flat on the floor the whole time. Slow and controlled!</div>':''}
       </div>
     </div>`;
 }
 
 function renderEx() {
-  document.getElementById('mainList').innerHTML=MAIN.map((ex,i)=>card(ex,i)).join('');
-  document.getElementById('coreList').innerHTML=CORE.map((ex,i)=>card(ex,MC+i)).join('');
+  const all=allExercises();
+  const mainIdx=all.map((_,i)=>i).filter(i=>DEFAULT_EX.includes(all[i]));
+  const coreIdx=all.map((_,i)=>i).filter(i=>CORE_EX.includes(all[i]));
+  const customIdx=all.map((_,i)=>i).filter(i=>i>=DEFAULT_EX.length+CORE_EX.length);
+
+  document.getElementById('mainList').innerHTML=mainIdx.map(i=>card(all[i],i)).join('');
+  document.getElementById('coreList').innerHTML=coreIdx.map(i=>card(all[i],i)).join('');
+
+  const customEl=document.getElementById('customList');
+  if(customIdx.length>0){
+    customEl.innerHTML='<div class="section-label">My Exercises ✨</div>'+customIdx.map(i=>card(all[i],i)).join('');
+  } else {
+    customEl.innerHTML='';
+  }
   updateBar();
 }
 
+// ─── SESSION SAVE ─────────────────────────────────────────────────────
 function completeSession() {
-  const dk=getDateKey();
+  const dk=getDateKey(), all=allExercises();
   const sets={};
-  for(let e=0;e<ALL.length;e++) sets[e]=JSON.parse(JSON.stringify(getSets(dk,e).sets));
-  const entry={ date:dk, displayDate:formatDisplayDate(dk), completion:pct(), sets };
+  for(let e=0;e<all.length;e++) sets[e]=JSON.parse(JSON.stringify(getSets(dk,e).sets));
+  const entry={ date:dk, displayDate:formatDisplayDate(dk), completion:pct(), sets, notes:S.notes[dk]||'' };
   const idx=S.history.findIndex(h=>h.date===dk);
   if(idx>=0) S.history[idx]=entry; else S.history.unshift(entry);
   S.history.sort((a,b)=>b.date.localeCompare(a.date));
@@ -356,30 +483,33 @@ function formatDisplayDate(str) {
   return d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 }
 
+// ─── HISTORY ─────────────────────────────────────────────────────────
 function renderHistory(filter='') {
-  const c=document.getElementById('historyList');
+  const c=document.getElementById('historyList'), all=allExercises();
   if(!S.history.length){ c.innerHTML='<div class="empty-state">No sessions saved yet 🌱<br>Complete a session in the Log tab<br>and it will appear here!</div>'; return; }
   const filtered=filter?S.history.filter(h=>h.displayDate.toLowerCase().includes(filter.toLowerCase())||h.date.includes(filter)):S.history;
   if(!filtered.length){ c.innerHTML='<div class="empty-state">No sessions match that search 🔍</div>'; return; }
   c.innerHTML=filtered.map((h,hi)=>{
-    const exRows=ALL.map((ex,ei)=>{
+    const exRows=all.map((ex,ei)=>{
       const sets=h.sets&&h.sets[ei]?h.sets[ei]:[];
-      const pills=sets.map(s=>`<span class="history-set-pill ${s.done?'done-pill':'skip-pill'}">${s.done?(s.w&&!ALL[ei].isCore?`${s.w}kg × ${s.r}`:`${s.r} reps`):'—'}</span>`).join('');
-      return `<div class="history-ex-row"><div class="history-ex-name">${ex.icon} ${ex.name}</div><div class="history-set-pills">${pills||'<span class="history-set-pill skip-pill">no data</span>'}</div></div>`;
+      if(!sets.length) return '';
+      const pills=sets.map(s=>`<span class="history-set-pill ${s.done?'done-pill':'skip-pill'}">${s.done?(s.w&&s.w!='0'?`${s.w}kg × ${s.r}`:`${s.r} reps`):'—'}</span>`).join('');
+      return `<div class="history-ex-row"><div class="history-ex-name">${ex.icon} ${ex.name}</div><div class="history-set-pills">${pills}</div></div>`;
     }).join('');
+    const notesHTML=h.notes?`<div class="history-notes"><div class="history-notes-label">📝 Notes</div>${h.notes}</div>`:'';
     return `
       <div class="history-card">
         <div class="history-card-header" onclick="expandH('hb_${hi}','hc_${hi}')">
           <div>
             <div class="history-card-date">${h.displayDate}</div>
-            <div class="history-card-meta">${h.completion}% complete</div>
+            <div class="history-card-meta">${h.completion}% complete${h.notes?' · 📝 has notes':''}</div>
           </div>
           <div style="display:flex;align-items:center;gap:10px">
             <span style="font-size:14px;font-weight:800;color:${h.completion===100?'var(--green)':'var(--rose)'}">${h.completion===100?'✅':h.completion+'%'}</span>
             <span style="font-size:12px;color:var(--text3)" id="hc_${hi}">▾</span>
           </div>
         </div>
-        <div class="history-card-body" id="hb_${hi}">${exRows}</div>
+        <div class="history-card-body" id="hb_${hi}">${exRows}${notesHTML}</div>
       </div>`;
   }).join('');
 }
@@ -391,12 +521,81 @@ function expandH(bid,cid) {
 
 function filterHistory(val) { renderHistory(val); }
 
-function switchTab(t, btn) {
+// ─── SETTINGS ────────────────────────────────────────────────────────
+function renderEmojiGrid() {
+  document.getElementById('emojiGrid').innerHTML=EMOJIS.map(e=>`
+    <button class="emoji-opt ${e===selectedEmoji?'selected':''}" onclick="selectEmoji('${e}')">${e}</button>`).join('');
+}
+
+function renderColorGrid() {
+  document.getElementById('colorGrid').innerHTML=COLORS.map(c=>`
+    <div class="color-opt ${c===selectedColor?'selected':''}" style="background:${c}" onclick="selectColor('${c}')"></div>`).join('');
+}
+
+function selectEmoji(e) { selectedEmoji=e; renderEmojiGrid(); }
+function selectColor(c) { selectedColor=c; renderColorGrid(); }
+
+function addCustomExercise() {
+  const name=document.getElementById('newExName').value.trim();
+  const muscles=document.getElementById('newExMuscles').value.trim();
+  const pattern=document.getElementById('newExPattern').value;
+  const defW=document.getElementById('newExKg').value||'12';
+  const defR=document.getElementById('newExReps').value||'10';
+  if(!name){ showToast('Please enter an exercise name 🌸'); return; }
+  S.customEx.push({
+    name, muscles:muscles||'Custom Exercise',
+    pattern, icon:selectedEmoji, color:selectedColor,
+    soft:selectedColor+'22', defW:Number(defW), defR:Number(defR)
+  });
+  save();
+  document.getElementById('newExName').value='';
+  document.getElementById('newExMuscles').value='';
+  document.getElementById('newExKg').value='';
+  document.getElementById('newExReps').value='';
+  selectedEmoji=EMOJIS[0]; selectedColor=COLORS[0];
+  renderEmojiGrid(); renderColorGrid();
+  renderCustomExList(); renderEx();
+  showToast(`${name} added! 🎉`);
+}
+
+function deleteCustomEx(i) {
+  S.customEx.splice(i,1); save(); renderCustomExList(); renderEx();
+  showToast('Exercise removed');
+}
+
+function renderCustomExList() {
+  const c=document.getElementById('customExList');
+  if(!S.customEx.length){ c.innerHTML='<div style="text-align:center;padding:16px;color:var(--text3);font-size:12px;font-weight:600">No custom exercises yet —<br>add one above! ✨</div>'; return; }
+  c.innerHTML=S.customEx.map((ex,i)=>`
+    <div class="custom-ex-item">
+      <div style="font-size:20px;margin-right:10px">${ex.icon}</div>
+      <div class="custom-ex-info">
+        <div class="custom-ex-name">${ex.name}</div>
+        <div class="custom-ex-meta">${ex.pattern} · ${ex.muscles}</div>
+      </div>
+      <button class="custom-ex-del" onclick="deleteCustomEx(${i})">×</button>
+    </div>`).join('');
+}
+
+function renderDefaultExList() {
+  document.getElementById('defaultExList').innerHTML=[...DEFAULT_EX,...CORE_EX].map(ex=>`
+    <div class="default-ex-item">
+      <span style="font-size:18px">${ex.icon}</span>
+      <div>
+        <div style="font-size:13px;font-weight:800;color:var(--text)">${ex.name}</div>
+        <div style="font-size:11px;color:var(--text3);font-weight:600">${ex.pattern}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ─── TAB SWITCHING ────────────────────────────────────────────────────
+function switchTab(t,btn) {
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('tab-'+t).classList.add('active');
   btn.classList.add('active');
   if(t==='history') renderHistory(document.getElementById('historySearch').value);
+  if(t==='settings'){ renderCustomExList(); renderDefaultExList(); renderEmojiGrid(); renderColorGrid(); }
 }
 
 function showToast(msg) {
@@ -404,11 +603,18 @@ function showToast(msg) {
   setTimeout(()=>t.classList.remove('show'),3200);
 }
 
+// ─── INIT ─────────────────────────────────────────────────────────────
 load();
 document.getElementById('sessionDate').value=todayStr();
-document.getElementById('sessionDate').addEventListener('change',()=>{ renderEx(); updateBar(); });
+document.getElementById('sessionDate').addEventListener('change',()=>{
+  loadNotesForDate(); renderEx(); updateBar();
+  const ta=document.getElementById('notesArea');
+  if(ta.classList.contains('open')) ta.value=S.notes[getDateKey()]||'';
+});
 renderEx();
 renderHistory();
+renderEmojiGrid();
+renderColorGrid();
 </script>
 </body>
 </html>
