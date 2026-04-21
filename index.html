@@ -145,7 +145,19 @@
   .color-opt.selected { border-color:var(--text); transform:scale(1.1); }
 
   .default-ex-list { }
-  .default-ex-item { display:flex; align-items:center; padding:10px 13px; background:var(--bg); border:2px solid var(--border); border-radius:12px; margin-bottom:8px; gap:10px; font-size:13px; font-weight:700; color:var(--text2); }
+  .default-ex-item { display:flex; align-items:center; padding:11px 13px; background:var(--bg); border:2px solid var(--border); border-radius:12px; margin-bottom:8px; gap:10px; }
+  .default-ex-edit-btn { width:30px; height:30px; border:none; background:var(--blue-soft); border-radius:8px; color:var(--blue); font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-left:auto; }
+  .default-ex-reset-btn { width:30px; height:30px; border:none; background:var(--rose-soft); border-radius:8px; color:var(--rose); font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+  /* EDIT MODAL */
+  .modal-overlay { position:fixed; inset:0; background:#00000055; z-index:300; display:none; align-items:flex-end; justify-content:center; }
+  .modal-overlay.open { display:flex; }
+  .modal-sheet { background:var(--surface); border-radius:24px 24px 0 0; padding:20px 16px 36px; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; animation:slideUp 0.25s ease; }
+  @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+  .modal-title { font-size:16px; font-weight:800; color:var(--text); margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; }
+  .modal-close { width:32px; height:32px; border:none; background:var(--rose-soft); border-radius:10px; color:var(--rose); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .modal-sub { font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--text3); margin-bottom:8px; margin-top:12px; }
+  .modal-save-btn { width:100%; padding:13px; margin-top:16px; background:linear-gradient(135deg,#e83b67,#f87096); border:none; border-radius:12px; color:#fff; font-family:'Nunito',sans-serif; font-size:15px; font-weight:800; cursor:pointer; }
 
   .empty-state { text-align:center; padding:28px 16px; color:var(--text3); font-size:13px; font-weight:600; line-height:1.9; }
 
@@ -279,6 +291,67 @@
       <div class="default-ex-list" id="defaultExList"></div>
     </div>
 
+    <!-- Backup & Restore -->
+    <div class="settings-card">
+      <div class="settings-card-title">💾 Backup & Restore</div>
+      <p style="font-size:12px;font-weight:600;color:var(--text2);line-height:1.7;margin-bottom:14px">
+        Export your data as a file to keep it safe. If anything ever goes wrong or you switch devices, import the file to restore everything.
+      </p>
+      <button class="add-ex-btn" onclick="exportData()" style="background:linear-gradient(135deg,#5ebd8e,#86d4ae);margin-bottom:10px">
+        📤 Export / Download Backup
+      </button>
+      <button class="add-ex-btn" onclick="document.getElementById('importFile').click()" style="background:linear-gradient(135deg,#6aacdf,#93c8ef)">
+        📥 Import / Restore Backup
+      </button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+      <div id="lastBackupLabel" style="margin-top:10px;font-size:11px;font-weight:600;color:var(--text3);text-align:center"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- EDIT DEFAULT EXERCISE MODAL -->
+<div class="modal-overlay" id="editModal" onclick="closeEditModal(event)">
+  <div class="modal-sheet">
+    <div class="modal-title">
+      <span id="editModalTitle">&#x270F;&#xFE0F; Edit Exercise</span>
+      <button class="modal-close" onclick="closeEditModal()">&#x00D7;</button>
+    </div>
+    <div class="modal-sub">Exercise Name</div>
+    <input class="settings-input" type="text" id="editExName" style="margin-bottom:0">
+    <div class="modal-sub">Muscles Worked</div>
+    <input class="settings-input" type="text" id="editExMuscles" style="margin-bottom:0">
+    <div class="modal-sub">Category</div>
+    <select class="settings-select" id="editExPattern" style="margin-bottom:0">
+      <option value="Squat">Squat</option>
+      <option value="Hinge">Hinge</option>
+      <option value="Horiz. Push">Horizontal Push</option>
+      <option value="Horiz. Pull">Horizontal Pull</option>
+      <option value="Vert. Pull">Vertical Pull</option>
+      <option value="Vert. Push">Vertical Push</option>
+      <option value="Core">Core</option>
+      <option value="Glutes">Glutes</option>
+      <option value="Arms">Arms</option>
+      <option value="Cardio">Cardio</option>
+      <option value="Other">Other</option>
+    </select>
+    <div class="modal-sub">Icon</div>
+    <div class="emoji-grid" id="editEmojiGrid"></div>
+    <div class="modal-sub">Colour</div>
+    <div class="color-grid" id="editColorGrid"></div>
+    <div class="modal-sub">Default Weight and Reps</div>
+    <div class="settings-row">
+      <div>
+        <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Default kg</div>
+        <input class="settings-input" type="number" id="editExKg" style="margin-bottom:0">
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Default reps</div>
+        <input class="settings-input" type="number" id="editExReps" style="margin-bottom:0">
+      </div>
+    </div>
+    <button class="modal-save-btn" onclick="saveDefaultEdit()">Save Changes</button>
+    <button class="add-ex-btn" onclick="resetDefaultEx()" style="margin-top:10px;background:linear-gradient(135deg,#888,#aaa)">Reset to Original</button>
   </div>
 </div>
 
@@ -302,7 +375,7 @@ const EMOJIS = ["🏋️","🦵","💪","🏹","🌊","⬆️","🍑","🐛","�
 const COLORS = ["#f87096","#5ebd8e","#6aacdf","#c49fdf","#fba77a","#f4c842","#e05c9c","#4db8a0","#5b8ff9","#a07cf5","#f97316","#10b981","#3b82f6","#8b5cf6"];
 
 // ─── STATE ──────────────────────────────────────────────────────────
-let S = { currentSets:{}, notes:{}, history:[], customEx:[] };
+let S = { currentSets:{}, notes:{}, history:[], customEx:[], defaultOverrides:{} };
 let selectedEmoji = EMOJIS[0];
 let selectedColor = COLORS[0];
 
@@ -312,14 +385,6 @@ function save() { try { localStorage.setItem('wt_v5',JSON.stringify(S)); } catch
 // ─── HELPERS ────────────────────────────────────────────────────────
 function todayStr() { return new Date().toISOString().split('T')[0]; }
 function getDateKey() { return document.getElementById('sessionDate').value || todayStr(); }
-
-function allExercises() {
-  return [
-    ...DEFAULT_EX,
-    ...CORE_EX,
-    ...S.customEx,
-  ];
-}
 
 function hexToSoft(hex) {
   return hex + '28';
@@ -577,15 +642,124 @@ function renderCustomExList() {
     </div>`).join('');
 }
 
+// ─── DEFAULT EXERCISE OVERRIDES ──────────────────────────────────────
+// S.defaultOverrides = { index: { name, muscles, pattern, icon, color, soft, defW, defR } }
+
+function getDefaultEx(i) {
+  const all=[...DEFAULT_EX,...CORE_EX];
+  const ex=all[i];
+  const ov=S.defaultOverrides&&S.defaultOverrides[i];
+  return ov ? { ...ex, ...ov } : ex;
+}
+
+// Patch allExercises to use overrides
+function allExercises() {
+  const base=[...DEFAULT_EX,...CORE_EX].map((_,i)=>getDefaultEx(i));
+  return [...base, ...S.customEx];
+}
+
 function renderDefaultExList() {
-  document.getElementById('defaultExList').innerHTML=[...DEFAULT_EX,...CORE_EX].map(ex=>`
+  const all=[...DEFAULT_EX,...CORE_EX];
+  document.getElementById('defaultExList').innerHTML=all.map((ex,i)=>{
+    const cur=getDefaultEx(i);
+    const isEdited=S.defaultOverrides&&S.defaultOverrides[i];
+    return `
     <div class="default-ex-item">
-      <span style="font-size:18px">${ex.icon}</span>
-      <div>
-        <div style="font-size:13px;font-weight:800;color:var(--text)">${ex.name}</div>
-        <div style="font-size:11px;color:var(--text3);font-weight:600">${ex.pattern}</div>
+      <div style="font-size:20px;flex-shrink:0">${cur.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:6px">
+          ${cur.name}
+          ${isEdited?'<span style="font-size:9px;background:var(--blue-soft);color:var(--blue);padding:1px 6px;border-radius:8px;font-weight:700">edited</span>':''}
+        </div>
+        <div style="font-size:11px;color:var(--text3);font-weight:600">${cur.pattern} &middot; ${cur.muscles}</div>
+        <div style="font-size:11px;color:var(--text2);font-weight:700;margin-top:2px">${cur.defW?cur.defW+'kg':'bodyweight'} &times; ${cur.defR} reps</div>
       </div>
-    </div>`).join('');
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="default-ex-edit-btn" onclick="openEditModal(${i})">&#x270F;</button>
+        ${isEdited?`<button class="default-ex-reset-btn" onclick="resetDefaultExAt(${i})">&#x21A9;</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── EDIT MODAL STATE ─────────────────────────────────────────────────
+let editingIdx = null;
+let editEmoji = null;
+let editColor = null;
+
+function openEditModal(i) {
+  editingIdx = i;
+  const ex = getDefaultEx(i);
+  editEmoji = ex.icon;
+  editColor = ex.color;
+  document.getElementById('editExName').value = ex.name;
+  document.getElementById('editExMuscles').value = ex.muscles;
+  document.getElementById('editExPattern').value = ex.pattern;
+  document.getElementById('editExKg').value = ex.defW||'';
+  document.getElementById('editExReps').value = ex.defR||'';
+  document.getElementById('editModalTitle').textContent = 'Edit: ' + ex.name;
+  renderEditEmojiGrid();
+  renderEditColorGrid();
+  document.getElementById('editModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeEditModal(e) {
+  if(e && e.target !== document.getElementById('editModal')) return;
+  document.getElementById('editModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderEditEmojiGrid() {
+  document.getElementById('editEmojiGrid').innerHTML=EMOJIS.map(em=>`
+    <button class="emoji-opt ${em===editEmoji?'selected':''}" onclick="selectEditEmoji('${em}')">${em}</button>`).join('');
+}
+
+function renderEditColorGrid() {
+  document.getElementById('editColorGrid').innerHTML=COLORS.map(c=>`
+    <div class="color-opt ${c===editColor?'selected':''}" style="background:${c}" onclick="selectEditColor('${c}')"></div>`).join('');
+}
+
+function selectEditEmoji(e) { editEmoji=e; renderEditEmojiGrid(); }
+function selectEditColor(c) { editColor=c; renderEditColorGrid(); }
+
+function saveDefaultEdit() {
+  if(editingIdx===null) return;
+  const name=document.getElementById('editExName').value.trim();
+  const muscles=document.getElementById('editExMuscles').value.trim();
+  const pattern=document.getElementById('editExPattern').value;
+  const defW=document.getElementById('editExKg').value;
+  const defR=document.getElementById('editExReps').value;
+  if(!name){ showToast('Please enter a name'); return; }
+  if(!S.defaultOverrides) S.defaultOverrides={};
+  S.defaultOverrides[editingIdx]={
+    name, muscles:muscles||getDefaultEx(editingIdx).muscles,
+    pattern, icon:editEmoji, color:editColor,
+    soft:editColor+'22',
+    defW:defW!==''?Number(defW):0,
+    defR:defR!==''?Number(defR):10,
+  };
+  save();
+  renderDefaultExList();
+  renderEx();
+  document.getElementById('editModal').classList.remove('open');
+  document.body.style.overflow='';
+  showToast(name + ' updated! ');
+}
+
+function resetDefaultExAt(i) {
+  if(!S.defaultOverrides) return;
+  delete S.defaultOverrides[i];
+  save(); renderDefaultExList(); renderEx();
+  showToast('Reset to original');
+}
+
+function resetDefaultEx() {
+  // Called from modal reset button
+  if(editingIdx===null) return;
+  resetDefaultExAt(editingIdx);
+  document.getElementById('editModal').classList.remove('open');
+  document.body.style.overflow='';
 }
 
 // ─── TAB SWITCHING ────────────────────────────────────────────────────
@@ -595,12 +769,59 @@ function switchTab(t,btn) {
   document.getElementById('tab-'+t).classList.add('active');
   btn.classList.add('active');
   if(t==='history') renderHistory(document.getElementById('historySearch').value);
-  if(t==='settings'){ renderCustomExList(); renderDefaultExList(); renderEmojiGrid(); renderColorGrid(); }
+  if(t==='settings'){ renderCustomExList(); renderDefaultExList(); renderEmojiGrid(); renderColorGrid(); updateBackupLabel(); }
 }
 
 function showToast(msg) {
   const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+// ─── BACKUP & RESTORE ─────────────────────────────────────────────────
+function exportData() {
+  const payload = JSON.stringify(S, null, 2);
+  const blob = new Blob([payload], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const date = new Date().toISOString().split('T')[0];
+  a.href = url;
+  a.download = `workout-backup-${date}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  // Save last backup timestamp
+  localStorage.setItem('wt_last_backup', new Date().toLocaleString());
+  updateBackupLabel();
+  showToast('Backup downloaded! 💾');
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      // Validate it looks like workout data
+      if (typeof parsed !== 'object' || (!parsed.history && !parsed.currentSets && !parsed.customEx)) {
+        showToast('Invalid backup file 😕'); return;
+      }
+      S = { currentSets:{}, notes:{}, history:[], customEx:[], ...parsed };
+      save();
+      renderEx(); renderHistory(); renderCustomExList(); renderDefaultExList();
+      showToast('Data restored successfully! 🌸');
+    } catch(err) {
+      showToast('Could not read file 😕');
+    }
+  };
+  reader.readAsText(file);
+  // Reset input so same file can be re-imported if needed
+  event.target.value = '';
+}
+
+function updateBackupLabel() {
+  const last = localStorage.getItem('wt_last_backup');
+  const el = document.getElementById('lastBackupLabel');
+  if (el) el.textContent = last ? `Last backup: ${last}` : 'No backup made yet';
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────
