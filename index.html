@@ -166,6 +166,14 @@
   .toast.show { transform:translateX(-50%) translateY(0); }
 
   select option { font-family:'Nunito',sans-serif; }
+
+  /* PROGRESS TAB */
+  .tab-btn { font-size:11px; }
+  .prog-ex-chip { padding:7px 13px; border-radius:20px; border:2px solid var(--border); background:var(--surface); color:var(--text2); font-family:'Nunito',sans-serif; font-size:12px; font-weight:700; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+  .prog-ex-chip.active { border-color:var(--rose); background:var(--rose-soft); color:var(--rose); }
+  .prog-stat-box { background:var(--surface2); border:2px solid var(--border); border-radius:12px; padding:10px 8px; text-align:center; }
+  .prog-stat-val { font-size:17px; font-weight:800; color:var(--rose); }
+  .prog-stat-label { font-size:9px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--text3); margin-top:3px; }
 </style>
 </head>
 <body>
@@ -181,6 +189,7 @@
     <div class="tab-bar">
       <button class="tab-btn active" onclick="switchTab('log',this)">📋 Log</button>
       <button class="tab-btn" onclick="switchTab('history',this)">📅 History</button>
+      <button class="tab-btn" onclick="switchTab('progress',this)">📈 Progress</button>
       <button class="tab-btn" onclick="switchTab('settings',this)">⚙️ Settings</button>
     </div>
   </div>
@@ -232,6 +241,33 @@
   <div class="tab-panel" id="tab-history">
     <input class="history-search" type="text" placeholder="🔍 Search by date..." oninput="filterHistory(this.value)" id="historySearch">
     <div id="historyList"></div>
+  </div>
+
+  <!-- PROGRESS TAB -->
+  <div class="tab-panel" id="tab-progress">
+    <div class="progress-tab-inner">
+      <div style="font-size:10px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--text3);margin-bottom:12px">Select Exercise</div>
+      <div id="progressExPicker" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px"></div>
+      <div id="progressChartWrap" style="background:var(--surface);border:2px solid var(--border);border-radius:18px;padding:16px;box-shadow:0 2px 8px #f4436008;">
+        <div id="progressChartEmpty" style="text-align:center;padding:32px 16px;color:var(--text3);font-size:13px;font-weight:600;line-height:1.9">
+          Select an exercise above<br>to see your progress over time 📈
+        </div>
+        <div id="progressChartContent" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <div>
+              <div id="progressExTitle" style="font-size:15px;font-weight:800;color:var(--text)"></div>
+              <div id="progressExMeta" style="font-size:11px;color:var(--text3);font-weight:600;margin-top:2px"></div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button id="chartToggleW" onclick="setChartMode('weight')" style="padding:5px 12px;border-radius:8px;border:2px solid var(--rose);background:var(--rose);color:#fff;font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer">Weight</button>
+              <button id="chartToggleR" onclick="setChartMode('reps')" style="padding:5px 12px;border-radius:8px;border:2px solid var(--border2);background:transparent;color:var(--text2);font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer">Reps</button>
+            </div>
+          </div>
+          <canvas id="progressCanvas" style="width:100%;height:200px;display:block"></canvas>
+          <div id="progressStats" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- SETTINGS TAB -->
@@ -307,6 +343,23 @@
       <div id="lastBackupLabel" style="margin-top:10px;font-size:11px;font-weight:600;color:var(--text3);text-align:center"></div>
     </div>
 
+  </div>
+</div>
+
+<!-- SESSION EDIT MODAL -->
+<div class="modal-overlay" id="sessionEditModal" onclick="closeSessionEditModal(event)">
+  <div class="modal-sheet">
+    <div class="modal-title">
+      <span id="sessionEditTitle">&#x270F;&#xFE0F; Edit Session</span>
+      <button class="modal-close" onclick="closeSessionEditModal()">&#x00D7;</button>
+    </div>
+    <div class="modal-sub">Date</div>
+    <div id="sessionEditDateLabel" style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:12px;padding:10px 13px;background:var(--bg);border:2px solid var(--border);border-radius:12px"></div>
+    <div class="modal-sub">Notes</div>
+    <textarea class="notes-textarea open" id="sessionEditNotes" style="margin-bottom:12px;display:block" placeholder="Session notes..."></textarea>
+    <div class="modal-sub">Sets — tap a value to edit</div>
+    <div id="sessionEditSets" style="max-height:360px;overflow-y:auto"></div>
+    <button class="modal-save-btn" onclick="saveSessionEdit()">&#x1F4BE; Save Changes</button>
   </div>
 </div>
 
@@ -406,9 +459,25 @@ function getSets(dk, ei) {
 }
 
 function pct() {
+  // Only count sets that have been interacted with (have reps logged)
+  // Progress = done sets / total sets that have any data entered
   const dk=getDateKey(), all=allExercises(); let tot=0,done=0;
-  for(let e=0;e<all.length;e++){ const s=getSets(dk,e).sets; tot+=s.length; done+=s.filter(x=>x.done).length; }
-  return tot===0?0:Math.round(done/tot*100);
+  for(let e=0;e<all.length;e++){
+    const sets=getSets(dk,e).sets;
+    const activeSets=sets.filter(s=>s.r!==''&&s.r!==null&&s.r!==undefined);
+    tot+=activeSets.length;
+    done+=activeSets.filter(s=>s.done).length;
+  }
+  // If nothing logged yet, just count done sets out of all sets
+  if(tot===0){
+    let allDone=0, allTot=0;
+    for(let e=0;e<all.length;e++){
+      const sets=getSets(dk,e).sets;
+      allTot+=sets.length; allDone+=sets.filter(s=>s.done).length;
+    }
+    return allTot===0?0:Math.round(allDone/allTot*100);
+  }
+  return Math.round(done/tot*100);
 }
 
 function prevBest(ei) {
@@ -514,9 +583,11 @@ function card(ex, ei) {
 
 function renderEx() {
   const all=allExercises();
-  const mainIdx=all.map((_,i)=>i).filter(i=>DEFAULT_EX.includes(all[i]));
-  const coreIdx=all.map((_,i)=>i).filter(i=>CORE_EX.includes(all[i]));
-  const customIdx=all.map((_,i)=>i).filter(i=>i>=DEFAULT_EX.length+CORE_EX.length);
+  const mainCount=DEFAULT_EX.length;
+  const coreCount=CORE_EX.length;
+  const mainIdx=all.map((_,i)=>i).filter(i=>i<mainCount);
+  const coreIdx=all.map((_,i)=>i).filter(i=>i>=mainCount&&i<mainCount+coreCount);
+  const customIdx=all.map((_,i)=>i).filter(i=>i>=mainCount+coreCount);
 
   document.getElementById('mainList').innerHTML=mainIdx.map(i=>card(all[i],i)).join('');
   document.getElementById('coreList').innerHTML=coreIdx.map(i=>card(all[i],i)).join('');
@@ -562,15 +633,19 @@ function renderHistory(filter='') {
       return `<div class="history-ex-row"><div class="history-ex-name">${ex.icon} ${ex.name}</div><div class="history-set-pills">${pills}</div></div>`;
     }).join('');
     const notesHTML=h.notes?`<div class="history-notes"><div class="history-notes-label">📝 Notes</div>${h.notes}</div>`:'';
+    // find real index in S.history for this entry
+    const realIdx = S.history.findIndex(x=>x.date===h.date);
     return `
       <div class="history-card">
         <div class="history-card-header" onclick="expandH('hb_${hi}','hc_${hi}')">
-          <div>
+          <div style="flex:1;min-width:0">
             <div class="history-card-date">${h.displayDate}</div>
             <div class="history-card-meta">${h.completion}% complete${h.notes?' · 📝 has notes':''}</div>
           </div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:14px;font-weight:800;color:${h.completion===100?'var(--green)':'var(--rose)'}">${h.completion===100?'✅':h.completion+'%'}</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+            <span style="font-size:13px;font-weight:800;color:${h.completion===100?'var(--green)':'var(--rose)'}">${h.completion===100?'✅':h.completion+'%'}</span>
+            <button onclick="event.stopPropagation();openSessionEdit(${realIdx})" style="width:28px;height:28px;border:none;background:var(--blue-soft);border-radius:8px;color:var(--blue);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">&#x270F;</button>
+            <button onclick="event.stopPropagation();deleteSession(${realIdx})" style="width:28px;height:28px;border:none;background:var(--rose-soft);border-radius:8px;color:var(--rose);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">&#x00D7;</button>
             <span style="font-size:12px;color:var(--text3)" id="hc_${hi}">▾</span>
           </div>
         </div>
@@ -769,6 +844,7 @@ function switchTab(t,btn) {
   document.getElementById('tab-'+t).classList.add('active');
   btn.classList.add('active');
   if(t==='history') renderHistory(document.getElementById('historySearch').value);
+  if(t==='progress'){ renderProgressExPicker(); renderProgressChart(); }
   if(t==='settings'){ renderCustomExList(); renderDefaultExList(); renderEmojiGrid(); renderColorGrid(); updateBackupLabel(); }
 }
 
@@ -822,6 +898,298 @@ function updateBackupLabel() {
   const last = localStorage.getItem('wt_last_backup');
   const el = document.getElementById('lastBackupLabel');
   if (el) el.textContent = last ? `Last backup: ${last}` : 'No backup made yet';
+}
+
+
+
+// ─── SESSION DELETE & EDIT ─────────────────────────────────────────────
+function deleteSession(idx) {
+  if (!confirm('Delete this session? This cannot be undone.')) return;
+  S.history.splice(idx, 1);
+  save();
+  renderHistory(document.getElementById('historySearch').value);
+  renderProgressExPicker && renderProgressExPicker();
+  showToast('Session deleted');
+}
+
+let editingSessionIdx = null;
+
+function openSessionEdit(idx) {
+  editingSessionIdx = idx;
+  const h = S.history[idx];
+  const all = allExercises();
+  document.getElementById('sessionEditTitle').textContent = 'Edit Session';
+  document.getElementById('sessionEditDateLabel').textContent = h.displayDate;
+  document.getElementById('sessionEditNotes').value = h.notes || '';
+
+  // Build editable sets UI
+  const container = document.getElementById('sessionEditSets');
+  container.innerHTML = all.map((ex, ei) => {
+    const sets = (h.sets && h.sets[ei]) ? h.sets[ei] : [];
+    if (!sets.length) return '';
+    const ic = !!ex.isCore;
+    const setsHTML = sets.map((s, si) => `
+      <div style="display:grid;grid-template-columns:22px 1fr 1fr 38px;gap:6px;margin-bottom:6px;align-items:center;opacity:${s.done?1:0.45}">
+        <div style="font-size:11px;font-weight:800;color:var(--text3);text-align:center">${si+1}</div>
+        <input class="set-input" type="number" inputmode="decimal" value="${s.w}" ${ic?'placeholder="—" style="opacity:0.3;pointer-events:none"':''}
+          oninput="updateSessionSet(${idx},${ei},${si},'w',this.value)" style="padding:7px 6px;font-size:13px">
+        <input class="set-input" type="number" inputmode="numeric" value="${s.r}"
+          oninput="updateSessionSet(${idx},${ei},${si},'r',this.value)" style="padding:7px 6px;font-size:13px">
+        <button class="check-btn ${s.done?'checked':''}" onclick="toggleSessionSet(${idx},${ei},${si})" style="width:34px;height:34px">&#x2713;</button>
+      </div>`).join('');
+    return `
+      <div style="margin-bottom:12px">
+        <div style="font-size:11px;font-weight:800;color:var(--text2);margin-bottom:6px">${ex.icon} ${ex.name}</div>
+        <div style="font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--text3);display:grid;grid-template-columns:22px 1fr 1fr 38px;gap:6px;padding-bottom:4px">
+          <div></div><div>kg</div><div>Reps</div><div>&#x2713;</div>
+        </div>
+        ${setsHTML}
+      </div>`;
+  }).join('');
+
+  document.getElementById('sessionEditModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function updateSessionSet(idx, ei, si, field, val) {
+  if (!S.history[idx] || !S.history[idx].sets || !S.history[idx].sets[ei]) return;
+  S.history[idx].sets[ei][si][field] = val;
+  // don't save on every keystroke — save on modal close/save
+}
+
+function toggleSessionSet(idx, ei, si) {
+  if (!S.history[idx] || !S.history[idx].sets || !S.history[idx].sets[ei]) return;
+  S.history[idx].sets[ei][si].done ^= true;
+  // re-render the sets in place
+  openSessionEdit(idx);
+}
+
+function saveSessionEdit() {
+  if (editingSessionIdx === null) return;
+  const notes = document.getElementById('sessionEditNotes').value;
+  S.history[editingSessionIdx].notes = notes;
+  // Recalculate completion for this session
+  const sets = S.history[editingSessionIdx].sets;
+  let tot = 0, done = 0;
+  Object.values(sets).forEach(arr => { tot += arr.length; done += arr.filter(s=>s.done).length; });
+  S.history[editingSessionIdx].completion = tot===0?0:Math.round(done/tot*100);
+  save();
+  renderHistory(document.getElementById('historySearch').value);
+  renderProgressExPicker && renderProgressExPicker();
+  document.getElementById('sessionEditModal').classList.remove('open');
+  document.body.style.overflow = '';
+  showToast('Session updated! &#x1F338;');
+}
+
+function closeSessionEditModal(e) {
+  if (e && e.target !== document.getElementById('sessionEditModal')) return;
+  document.getElementById('sessionEditModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ─── PROGRESS CHART ────────────────────────────────────────────────────
+let activeChartEx = null;
+let chartMode = 'weight'; // 'weight' or 'reps'
+
+function renderProgressExPicker() {
+  const all = allExercises();
+  const picker = document.getElementById('progressExPicker');
+  if (!picker) return;
+  picker.innerHTML = all.map((ex, i) => `
+    <button class="prog-ex-chip ${activeChartEx===i?'active':''}" onclick="selectProgressEx(${i})">
+      ${ex.icon} ${ex.name}
+    </button>`).join('');
+}
+
+function selectProgressEx(ei) {
+  activeChartEx = ei;
+  renderProgressExPicker();
+  renderProgressChart();
+}
+
+function setChartMode(mode) {
+  chartMode = mode;
+  const wb = document.getElementById('chartToggleW');
+  const rb = document.getElementById('chartToggleR');
+  if (wb && rb) {
+    if (mode === 'weight') {
+      wb.style.background='var(--rose)'; wb.style.color='#fff'; wb.style.borderColor='var(--rose)';
+      rb.style.background='transparent'; rb.style.color='var(--text2)'; rb.style.borderColor='var(--border2)';
+    } else {
+      rb.style.background='var(--rose)'; rb.style.color='#fff'; rb.style.borderColor='var(--rose)';
+      wb.style.background='transparent'; wb.style.color='var(--text2)'; wb.style.borderColor='var(--border2)';
+    }
+  }
+  renderProgressChart();
+}
+
+function getProgressData(ei) {
+  // Collect all sessions with data for this exercise, sorted by date ascending
+  const points = [];
+  const sorted = [...S.history].sort((a,b) => a.date.localeCompare(b.date));
+  for (const h of sorted) {
+    if (!h.sets || !h.sets[ei]) continue;
+    const doneSets = h.sets[ei].filter(s => s.done && s.r);
+    if (!doneSets.length) continue;
+    // Use best set of the session (highest weight, then highest reps)
+    const best = doneSets.reduce((prev, cur) => {
+      const pw = parseFloat(prev.w)||0, cw = parseFloat(cur.w)||0;
+      const pr = parseFloat(prev.r)||0, cr = parseFloat(cur.r)||0;
+      if (cw > pw) return cur;
+      if (cw === pw && cr > pr) return cur;
+      return prev;
+    });
+    points.push({
+      date: h.date,
+      displayDate: h.displayDate,
+      weight: parseFloat(best.w)||0,
+      reps: parseFloat(best.r)||0,
+      sets: doneSets.length,
+    });
+  }
+  return points;
+}
+
+function renderProgressChart() {
+  const empty = document.getElementById('progressChartEmpty');
+  const content = document.getElementById('progressChartContent');
+  if (activeChartEx === null) { empty.style.display='block'; content.style.display='none'; return; }
+
+  const all = allExercises();
+  const ex = all[activeChartEx];
+  const data = getProgressData(activeChartEx);
+
+  empty.style.display = 'none';
+  content.style.display = 'block';
+
+  document.getElementById('progressExTitle').textContent = ex.icon + ' ' + ex.name;
+
+  if (data.length === 0) {
+    document.getElementById('progressExMeta').textContent = 'No logged sessions yet';
+    const canvas = document.getElementById('progressCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth * window.devicePixelRatio || 300;
+    canvas.height = 200 * window.devicePixelRatio || 200;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = '#d4a0b0';
+    ctx.font = '14px Nunito';
+    ctx.textAlign = 'center';
+    ctx.fillText('No data yet — log some sessions!', canvas.width/2, canvas.height/2);
+    document.getElementById('progressStats').innerHTML = '';
+    return;
+  }
+
+  document.getElementById('progressExMeta').textContent =
+    data.length + ' session' + (data.length!==1?'s':'') + ' logged · showing best set per session';
+
+  // Draw chart
+  drawChart(data, chartMode === 'weight' ? 'weight' : 'reps');
+
+  // Stats
+  const vals = data.map(d => chartMode==='weight' ? d.weight : d.reps).filter(v=>v>0);
+  const first = vals[0]||0, last = vals[vals.length-1]||0;
+  const best = Math.max(...vals);
+  const change = last - first;
+  const changeStr = (change>=0?'+':'')+change.toFixed(1) + (chartMode==='weight'?' kg':' reps');
+  document.getElementById('progressStats').innerHTML = `
+    <div class="prog-stat-box"><div class="prog-stat-val">${first}${chartMode==='weight'?'kg':''}</div><div class="prog-stat-label">Starting</div></div>
+    <div class="prog-stat-box"><div class="prog-stat-val">${best}${chartMode==='weight'?'kg':''}</div><div class="prog-stat-label">Best Ever</div></div>
+    <div class="prog-stat-box"><div class="prog-stat-val" style="color:${change>=0?'var(--green)':'var(--rose)'}">${changeStr}</div><div class="prog-stat-label">Total Change</div></div>`;
+}
+
+function drawChart(data, field) {
+  const canvas = document.getElementById('progressCanvas');
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.offsetWidth || 320;
+  const H = 200;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const vals = data.map(d => d[field]);
+  const minV = Math.max(0, Math.min(...vals) * 0.85);
+  const maxV = Math.max(...vals) * 1.1 || 1;
+  const pad = { top:20, right:16, bottom:36, left:40 };
+  const cW = W - pad.left - pad.right;
+  const cH = H - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Grid lines
+  ctx.strokeStyle = '#fcd5de55';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (cH / 4) * i;
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + cW, y); ctx.stroke();
+    const val = maxV - ((maxV - minV) / 4) * i;
+    ctx.fillStyle = '#d4a0b0';
+    ctx.font = `${10 * dpr / dpr}px Nunito`;
+    ctx.textAlign = 'right';
+    ctx.fillText(val.toFixed(field==='weight'?1:0), pad.left - 4, y + 4);
+  }
+
+  if (data.length === 1) {
+    // Single point
+    const x = pad.left + cW / 2;
+    const y = pad.top + cH / 2;
+    ctx.fillStyle = '#f43f72';
+    ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI*2); ctx.fill();
+  } else {
+    // Gradient fill
+    const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + cH);
+    grad.addColorStop(0, '#f43f7230');
+    grad.addColorStop(1, '#f43f7205');
+
+    const pts = data.map((d, i) => ({
+      x: pad.left + (i / (data.length - 1)) * cW,
+      y: pad.top + cH - ((d[field] - minV) / (maxV - minV)) * cH,
+    }));
+
+    // Fill area
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pad.top + cH);
+    pts.forEach(p => ctx.lineTo(p.x, p.y));
+    ctx.lineTo(pts[pts.length-1].x, pad.top + cH);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Line
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < pts.length; i++) {
+      const cp1x = (pts[i-1].x + pts[i].x)/2, cp1y = pts[i-1].y;
+      const cp2x = (pts[i-1].x + pts[i].x)/2, cp2y = pts[i].y;
+      ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, pts[i].x, pts[i].y);
+    }
+    ctx.strokeStyle = '#f43f72';
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+
+    // Dots
+    pts.forEach((p, i) => {
+      ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2);
+      ctx.fillStyle = '#f43f72'; ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    });
+  }
+
+  // X axis labels — show first, last, and a few in between
+  const labelIdx = data.length <= 6
+    ? data.map((_,i)=>i)
+    : [0, Math.floor(data.length/3), Math.floor(data.length*2/3), data.length-1];
+  ctx.fillStyle = '#d4a0b0';
+  ctx.font = '9px Nunito';
+  ctx.textAlign = 'center';
+  labelIdx.forEach(i => {
+    const x = data.length===1 ? pad.left+cW/2 : pad.left + (i/(data.length-1))*cW;
+    const short = data[i].date.slice(5); // MM-DD
+    ctx.fillText(short, x, H - pad.bottom + 14);
+  });
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────
